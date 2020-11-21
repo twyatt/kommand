@@ -21,7 +21,7 @@ Kommand is configured via `$HOME/.kommand.js`. The configuration file has the fo
                     },
                     ...
                 ],
-                "command": SHELL_COMMAND
+                "run": SHELL_COMMAND
             },
             ...
         },
@@ -41,7 +41,7 @@ Execution working directory will be the current directory name relative to the c
     "projects": {
         "kable": {
             "install": {
-                "command": "./gradlew publishToMavenLocal"
+                "run": "./gradlew publishToMavenLocal"
             }
         },
         "sensortag": {
@@ -52,7 +52,7 @@ Execution working directory will be the current directory name relative to the c
                         "command": "install"
                     }
                 ],
-                "command": "./gradlew runDebugExecutableMacosX64"
+                "run": "./gradlew runDebugExecutableMacosX64"
             }
         }
     }

@@ -33,7 +33,7 @@ data class Project(
 @Serializable
 data class Command(
     @SerialName("dependsOn") val dependencies: List<Dependency>? = null,
-    val command: String
+    val run: String
 )
 
 @Serializable

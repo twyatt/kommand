@@ -27,8 +27,8 @@ fun Config.path(project: Project) = "$homeDirectory/${project.name}"
 fun Project.execute(command: Command, dryRun: Boolean) {
     command.dependencies?.forEach { execute(it, dryRun) }
     if (!dryRun) println()
-    println("🏃 $name ▶ ${command.command}")
-    if (!dryRun) execute(config.path(this), command.command)
+    println("🏃 $name ▶ ${command.run}")
+    if (!dryRun) execute(config.path(this), command.run)
 }
 
 fun execute(dependency: Dependency, dryRun: Boolean) {
