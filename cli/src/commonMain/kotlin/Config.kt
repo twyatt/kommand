@@ -23,6 +23,7 @@ private typealias Name = String
 data class Config(
     @SerialName("home") val homeDirectory: String,
     val projects: Map<Name, Project>,
+    val global: Map<Name, Command>? = null,
 )
 
 data class Project(
@@ -33,7 +34,7 @@ data class Project(
 @Serializable
 data class Command(
     @SerialName("dependsOn") val dependencies: List<Dependency>? = null,
-    val run: String
+    val run: String,
 )
 
 @Serializable
@@ -54,7 +55,8 @@ object ConfigSerializer : KSerializer<Config> {
             homeDirectory = surrogate.homeDirectory,
             projects = surrogate.projects.map { (name, commands) ->
                 name to Project(name, commands)
-            }.toMap()
+            }.toMap(),
+            global = surrogate.global,
         )
     }
 }
@@ -63,4 +65,5 @@ object ConfigSerializer : KSerializer<Config> {
 private data class ConfigSurrogate(
     @SerialName("home") val homeDirectory: String,
     val projects: Map<Name, Map<Name, Command>>,
+    val global: Map<Name, Command>? = null,
 )

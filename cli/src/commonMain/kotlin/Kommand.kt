@@ -13,16 +13,37 @@ class Kommand : CliktCommand() {
     override fun run() {
         val projectName = currentDirectoryPath.substringAfterLast("/")
         val project = config.projects[projectName]
-            ?: error("Project '$projectName' not found in config")
+        val globalCommand = config.global?.get(command)
 
-        project.execute(
-            command.let { project.commands[it] ?: error("Command '$it' not found in project") },
-            dryRun
-        )
+        if (project != null) {
+            project.execute(
+                command.let {
+                    project.commands[it]
+                        ?: globalCommand
+                        ?: error("Command '$it' not found in project")
+                },
+                dryRun
+            )
+        } else {
+            // Attempt to run as global command
+            globalCommand
+                // Global command not found, so we assume user was trying to run a project command.
+                ?: error("Project '$projectName' not found in config")
+
+            execute(globalCommand, dryRun)
+        }
     }
 }
 
 fun Config.path(project: Project) = "$homeDirectory/${project.name}"
+
+/** Execute `global` [Command]. */
+fun execute(command: Command, dryRun: Boolean) {
+    command.dependencies?.forEach { execute(it, dryRun) }
+    if (!dryRun) println()
+    println("🏃 ${command.run}")
+    if (!dryRun) execute(currentDirectoryPath, command.run)
+}
 
 fun Project.execute(command: Command, dryRun: Boolean) {
     command.dependencies?.forEach { execute(it, dryRun) }

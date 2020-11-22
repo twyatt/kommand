@@ -26,12 +26,16 @@ Kommand is configured via `$HOME/.kommand.js`. The configuration file has the fo
             ...
         },
         ...
+    },
+    "global": {
+        COMMAND_NAME: ...
     }
 }
 ```
 
 When `kommand` is run, the current directory name is considered the **project** being operated on.
 Execution working directory will be the current directory name relative to the configured `home`.
+`global` commands are available regardless of what the current directory is.
 
 ### Example
 
@@ -54,6 +58,11 @@ Execution working directory will be the current directory name relative to the c
                 ],
                 "run": "./gradlew runDebugExecutableMacosX64"
             }
+        }
+    },
+    "global": {
+        "config": {
+            "run": "subl ~/.kommand.json"
         }
     }
 }
