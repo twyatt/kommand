@@ -8,7 +8,8 @@ import com.github.ajalt.clikt.parameters.options.option
 class Kommand : CliktCommand() {
 
     private val command by argument()
-    private val dryRun by option("-d", "--dry-run").flag()
+    private val dryRun by option("-u", "--dry-run", help = "Don't execute commands, only display what would be run").flag()
+    private val dependenciesOnly by option("-d", "--dependencies-only", help = "Only execute commands for the project's dependencies, not for the project itself").flag()
 
     override fun run() {
         val projectName = currentDirectoryPath.substringAfterLast("/")
@@ -22,7 +23,8 @@ class Kommand : CliktCommand() {
                         ?: globalCommand
                         ?: error("Command '$it' not found in project")
                 },
-                dryRun
+                dryRun,
+                dependenciesOnly,
             )
         } else {
             // Attempt to run as global command
@@ -30,7 +32,7 @@ class Kommand : CliktCommand() {
                 // Global command not found, so we assume user was trying to run a project command.
                 ?: error("Project '$projectName' not found in config")
 
-            execute(globalCommand, dryRun)
+            execute(globalCommand, dryRun, dependenciesOnly)
         }
     }
 }
@@ -38,18 +40,24 @@ class Kommand : CliktCommand() {
 fun Config.path(project: Project) = "$homeDirectory/${project.name}"
 
 /** Execute `global` [Command]. */
-fun execute(command: Command, dryRun: Boolean) {
+fun execute(command: Command, dryRun: Boolean, dependenciesOnly: Boolean) {
     command.dependencies?.forEach { execute(it, dryRun) }
-    if (!dryRun) println()
-    println("🏃 ${command.run}")
-    if (!dryRun) execute(currentDirectoryPath, command.run)
+
+    if (!dependenciesOnly) {
+        if (!dryRun) println()
+        println("🏃 ${command.run}")
+        if (!dryRun) execute(currentDirectoryPath, command.run)
+    }
 }
 
-fun Project.execute(command: Command, dryRun: Boolean) {
+fun Project.execute(command: Command, dryRun: Boolean, dependenciesOnly: Boolean) {
     command.dependencies?.forEach { execute(it, dryRun) }
-    if (!dryRun) println()
-    println("🏃 $name ▶ ${command.run}")
-    if (!dryRun) execute(config.path(this), command.run)
+
+    if (!dependenciesOnly) {
+        if (!dryRun) println()
+        println("🏃 $name ▶ ${command.run}")
+        if (!dryRun) execute(config.path(this), command.run)
+    }
 }
 
 fun execute(dependency: Dependency, dryRun: Boolean) {
@@ -61,5 +69,5 @@ fun execute(dependency: Dependency, dryRun: Boolean) {
     val command = project.commands[commandName]
         ?: error("Command '$commandName' not found in project '$projectName'")
 
-    project.execute(command, dryRun)
+    project.execute(command, dryRun, dependenciesOnly = false)
 }
