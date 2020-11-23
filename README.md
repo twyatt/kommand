@@ -2,7 +2,25 @@
 
 # Kommand
 
-Quick command execution tool.
+Quick command execution tool that allows configuring **current directory** aware command execution.
+For example: have an `install` command invoke one command for one project and a different command
+for a project located in a different folder.
+
+Supports notion of command dependencies, whereas a project's command can be configured to depend on
+a separate project command; especially useful when developming against large project dependency
+trees where a project compilation depends on other projects being compiled/installed first.
+
+```
+$ kommand --help
+Usage: kommand [OPTIONS] COMMAND
+
+Options:
+  -u, --dry-run            Don't execute commands, only display what would be
+                           run
+  -d, --dependencies-only  Only execute commands for the project's
+                           dependencies, not for the project itself
+  -h, --help               Show this message and exit
+```
 
 ## Configuration
 
