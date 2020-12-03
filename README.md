@@ -7,7 +7,7 @@ For example: have an `install` command invoke one command for one project and a 
 for a project located in a different folder.
 
 Supports notion of command dependencies, whereas a project's command can be configured to depend on
-a separate project command; especially useful when developming against large project dependency
+a separate project command; especially useful when developing against large project dependency
 trees where a project compilation depends on other projects being compiled/installed first.
 
 ```
